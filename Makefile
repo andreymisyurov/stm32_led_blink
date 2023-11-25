@@ -1,17 +1,11 @@
 CC=arm-none-eabi-gcc
+SRC=./source
+LIB=-L./lib
+INC=-I./include
 
 all: sturtup.o main.o delay.o
-	arm-none-eabi-gcc -o fw.elf sturtup.o main.o delay.o -Tlinker.ld -Wl,--gc-sections -nostartfiles -L. -lc
+	arm-none-eabi-gcc -o fw.elf sturtup.o main.o delay.o -Tlinker.ld -Wl,--gc-sections -nostartfiles -lc $(LIB)
 	arm-none-eabi-objcopy -O binary fw.elf fw.bin
-
-sturtup.o: sturtup.c
-	$(CC) -c sturtup.c -o sturtup.o
-
-main.o: main.c
-	$(CC) -c main.c -o main.o
-
-delay.o: delay.c
-	$(CC) -c delay.c -o delay.o
 
 flash:
 	st-info --probe
@@ -19,3 +13,12 @@ flash:
 
 clean:
 	rm -rf *.o *.bin *.elf
+
+sturtup.o: $(SRC)/sturtup.c
+	$(CC) -c $(SRC)/sturtup.c -o sturtup.o $(INC)
+
+main.o: $(SRC)/main.c
+	$(CC) -c $(SRC)/main.c -o main.o $(INC)
+
+delay.o: $(SRC)/delay.c
+	$(CC) -c $(SRC)/delay.c -o delay.o
